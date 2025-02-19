@@ -5,11 +5,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { LanguageCode } from '../constants/language-code.ts';
-import type {
-  AbstractDto,
-  AbstractTranslationDto,
-} from './dto/abstract.dto.ts';
+import { LanguageCode } from '../constants/language-code';
+import type { AbstractDto } from './dto/abstract.dto';
 
 /**
  * Abstract Entity
@@ -24,7 +21,7 @@ export abstract class AbstractEntity<
   O = never,
 > {
   @PrimaryGeneratedColumn('uuid')
-  id!: Uuid;
+  id!: string;
 
   @CreateDateColumn({
     type: 'timestamp',
@@ -52,7 +49,7 @@ export abstract class AbstractEntity<
 }
 
 export class AbstractTranslationEntity<
-  DTO extends AbstractTranslationDto = AbstractTranslationDto,
+  DTO extends AbstractDto = AbstractDto,
   O = never,
 > extends AbstractEntity<DTO, O> {
   @Column({ type: 'enum', enum: LanguageCode })

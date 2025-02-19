@@ -1,38 +1,30 @@
-import {
-  BooleanField,
-  NumberField,
-} from '../../decorators/field.decorators.ts';
-import type { PageOptionsDto } from './page-options.dto.ts';
-
-interface IPageMetaDtoParameters {
-  pageOptionsDto: PageOptionsDto;
-  itemCount: number;
-}
+import { ApiProperty } from '@nestjs/swagger';
+import { PageOptionsDto } from './page-options.dto';
 
 export class PageMetaDto {
-  @NumberField()
+  @ApiProperty()
   readonly page: number;
 
-  @NumberField()
+  @ApiProperty()
   readonly take: number;
 
-  @NumberField()
-  readonly itemCount: number;
+  @ApiProperty()
+  readonly total: number;
 
-  @NumberField()
+  @ApiProperty()
   readonly pageCount: number;
 
-  @BooleanField()
+  @ApiProperty()
   readonly hasPreviousPage: boolean;
 
-  @BooleanField()
+  @ApiProperty()
   readonly hasNextPage: boolean;
 
-  constructor({ pageOptionsDto, itemCount }: IPageMetaDtoParameters) {
-    this.page = pageOptionsDto.page;
-    this.take = pageOptionsDto.take;
-    this.itemCount = itemCount;
-    this.pageCount = Math.ceil(this.itemCount / this.take);
+  constructor(pageOptionsDto: PageOptionsDto, total: number) {
+    this.page = pageOptionsDto.page ?? 1;
+    this.take = pageOptionsDto.take ?? 10;
+    this.total = total;
+    this.pageCount = Math.ceil(this.total / this.take);
     this.hasPreviousPage = this.page > 1;
     this.hasNextPage = this.page < this.pageCount;
   }

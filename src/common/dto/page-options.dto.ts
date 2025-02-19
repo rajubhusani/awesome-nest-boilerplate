@@ -1,3 +1,6 @@
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsNumber, IsOptional, Min } from 'class-validator';
 import { Order } from '../../constants/order.ts';
 import {
   EnumFieldOptional,
@@ -11,23 +14,24 @@ export class PageOptionsDto {
   })
   readonly order!: Order;
 
-  @NumberFieldOptional({
-    minimum: 1,
-    default: 1,
-    int: true,
-  })
-  readonly page!: number;
+  @ApiPropertyOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  @Min(1)
+  readonly page?: number = 1;
 
-  @NumberFieldOptional({
-    minimum: 1,
-    maximum: 50,
-    default: 10,
-    int: true,
-  })
-  readonly take!: number;
+  @ApiPropertyOptional()
+  @Type(() => Number)
+  @IsNumber()
+  @IsOptional()
+  @Min(1)
+  readonly take?: number = 10;
 
   get skip(): number {
-    return (this.page - 1) * this.take;
+    const page = this.page ?? 1;
+    const take = this.take ?? 10;
+    return (page - 1) * take;
   }
 
   @StringFieldOptional()
