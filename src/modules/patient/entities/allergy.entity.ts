@@ -1,12 +1,12 @@
 import { Column, Entity, ManyToOne, JoinColumn } from 'typeorm';
-import { AbstractEntity } from '../../../common/abstract.entity';
-import { PatientEntity } from './patient.entity';
+import { BaseEntity } from '../../../common/entities/base.entity';
+import { Patient } from './patient.entity';
 import { UseDto } from '../../../common/decorators/use-dto.decorator';
 import { AllergyDto } from '../dtos/allergy.dto';
 
 @Entity({ name: 'allergy' })
 @UseDto(AllergyDto)
-export class AllergyEntity extends AbstractEntity {
+export class AllergyEntity extends BaseEntity {
   @Column({ type: 'uuid' })
   patientId!: string;
 
@@ -37,7 +37,7 @@ export class AllergyEntity extends AbstractEntity {
   @Column({ type: 'text', nullable: true })
   notes!: string;
 
-  @ManyToOne(() => PatientEntity, (patient) => patient.allergies)
+  @ManyToOne(() => Patient, (patient: Patient) => patient.allergies)
   @JoinColumn({ name: 'patient_id' })
-  patient!: PatientEntity;
+  patient!: Patient;
 } 

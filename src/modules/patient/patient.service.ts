@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist/common';
 import { Repository } from 'typeorm';
-import { PatientEntity } from './entities/patient.entity';
+import { Patient } from './entities/patient.entity';
 import { CreatePatientDto } from './dtos/create-patient.dto';
 import { UpdatePatientDto } from './dtos/update-patient.dto';
 import { SearchPatientDto } from './dtos/search-patient.dto';
@@ -12,11 +12,11 @@ import { GeneralException } from '../../exceptions/general.exception';
 @Injectable()
 export class PatientService {
   constructor(
-    @InjectRepository(PatientEntity)
-    private readonly patientRepository: Repository<PatientEntity>,
+    @InjectRepository(Patient)
+    private readonly patientRepository: Repository<Patient>,
   ) {}
 
-  async create(createPatientDto: CreatePatientDto): Promise<PatientEntity> {
+  async create(createPatientDto: CreatePatientDto): Promise<Patient> {
     try {
       const patient = this.patientRepository.create({
         ...createPatientDto,
@@ -29,7 +29,7 @@ export class PatientService {
     }
   }
 
-  async findOne(id: string): Promise<PatientEntity> {
+  async findOne(id: string): Promise<Patient> {
     const patient = await this.patientRepository.findOne({ where: { id } });
     if (!patient) {
       throw new NotFoundException('Patient not found');
@@ -37,7 +37,7 @@ export class PatientService {
     return patient;
   }
 
-  async update(id: string, updatePatientDto: UpdatePatientDto): Promise<PatientEntity> {
+  async update(id: string, updatePatientDto: UpdatePatientDto): Promise<Patient> {
     const patient = await this.findOne(id);
     try {
       const updatedPatient = { ...patient, ...updatePatientDto };
@@ -53,7 +53,7 @@ export class PatientService {
     await this.patientRepository.save(patient);
   }
 
-  async search(searchDto: SearchPatientDto, pageOptionsDto: PageOptionsDto): Promise<PageDto<PatientEntity>> {
+  async search(searchDto: SearchPatientDto, pageOptionsDto: PageOptionsDto): Promise<PageDto<Patient>> {
     const queryBuilder = this.patientRepository.createQueryBuilder('patient');
 
     if (searchDto.mrn) {

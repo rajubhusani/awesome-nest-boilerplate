@@ -8,18 +8,20 @@ import prettierPlugin from 'eslint-plugin-prettier/recommended';
 import sonarjsPlugin from 'eslint-plugin-sonarjs';
 import promisePlugin from 'eslint-plugin-promise';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
-import importPlugin from 'eslint-plugin-import';
+import * as importPlugin from 'eslint-plugin-import';
 import unicornPlugin from 'eslint-plugin-unicorn';
 import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import { configs as tsConfigs, plugin as tsPlugin } from 'typescript-eslint';
 import github from 'eslint-plugin-github';
 
 let githubFlatConfig = github.getFlatConfigs();
-export default tseslint.config(
+export default [
   eslint.configs.recommended,
+  tsConfigs.base,
   promisePlugin.configs['flat/recommended'],
   {
     plugins: {
+      '@typescript-eslint': tsPlugin,
       'simple-import-sort': simpleImportSort,
       '@stylistic': stylisticPlugin,
     },
@@ -55,7 +57,7 @@ export default tseslint.config(
   },
   {
     extends: [
-      githubFlatConfig.recommended,
+    //   githubFlatConfig.recommended,
       ...githubFlatConfig.typescript,
     ],
     rules: {
@@ -64,8 +66,8 @@ export default tseslint.config(
   },
   {
     extends: [
-      importPlugin.flatConfigs.recommended,
-      importPlugin.flatConfigs.typescript,
+    //   'plugin:import/recommended',
+    //   'plugin:import/typescript'
     ],
     rules: {
       'import/extensions': ['error', 'always', {ignorePackages: true}],
@@ -168,10 +170,10 @@ export default tseslint.config(
     },
   },
   {
-    extends: [...tseslint.configs.strictTypeChecked,
-      tseslint.configs.eslintRecommended,
-      ...tseslint.configs.stylisticTypeChecked,
-      ...tseslint.configs.recommendedTypeChecked],
+    extends: [...tsConfigs.strictTypeChecked,
+      tsConfigs.eslintRecommended,
+      ...tsConfigs.stylisticTypeChecked,
+      ...tsConfigs.recommendedTypeChecked],
     rules: {
       'no-redeclare': 'off',
       '@typescript-eslint/no-redeclare': 'error',
@@ -444,7 +446,7 @@ export default tseslint.config(
   },
   {
     languageOptions: {
-      ecmaVersion: 'latest',
+      ecmaVersion: "latest",
       sourceType: 'module',
       globals: {
         ...globals.builtin,
@@ -452,7 +454,7 @@ export default tseslint.config(
       },
       parserOptions: {
         projectService: {
-          extraFileExtensions: ['.ts'],
+        //   extraFileExtensions: ['.ts'],
           defaultProject: 'tsconfig.eslint.json',
         },
         // @ts-ignore
@@ -460,4 +462,4 @@ export default tseslint.config(
       },
     },
   },
-);
+];

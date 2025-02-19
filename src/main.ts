@@ -14,6 +14,7 @@ import compression from 'compression';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import { initializeTransactionalContext } from 'typeorm-transactional';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import { AppModule } from './app.module.ts';
 import { HttpExceptionFilter } from './filters/bad-request.filter.ts';
@@ -79,7 +80,28 @@ export async function bootstrap(): Promise<NestExpressApplication> {
   }
 
   if (configService.documentationEnabled) {
-    setupSwagger(app);
+    const config = new DocumentBuilder()
+      .setTitle('Patient Management API')
+      .setDescription('Complete API documentation for the Patient Management System')
+      .setVersion('1.0')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          name: 'JWT',
+          description: 'Enter JWT token',
+          in: 'header',
+        },
+        'JWT-auth', // This name here is important for matching up with @ApiBearerAuth() in your controllers
+      )
+      .addTag('Patients', 'Patient management endpoints')
+      .addTag('Auth', 'Authentication endpoints')
+      .addTag('Users', 'User management endpoints')
+      .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api', app, document);
   }
 
   // Starts listening for shutdown hooks
@@ -93,7 +115,6 @@ export async function bootstrap(): Promise<NestExpressApplication> {
     await app.listen(port);
     console.info(`server running on ${await app.getUrl()}`);
   }
-
 
   return app;
 }
